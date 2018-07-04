@@ -2,6 +2,8 @@ package com.example.hp.myapplication;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -10,16 +12,26 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.PlaceDetectionClient;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -50,7 +62,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState != null){
+            mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+            mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+        }
+
         setContentView(R.layout.activity_maps);
+
+        mGeoDataClient = Places.getGeoDataClient(this,null);
+
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this,null);
+
+        mFusedClientProvider = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -70,7 +94,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        System.out.println("vao on map ready");
         mMap = googleMap;
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_content, (FrameLayout) findViewById(R.id.map), false);
+
+                TextView title = ((TextView)infoWindow.findViewById(R.id.title));
+                title.setText(marker.getTitle());
+
+                TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
+                snippet.setText(marker.getSnippet());
+
+                return infoWindow;
+            }
+        });
+
+        getLocationPerission();
         updateLocationUI();
         getDeviceLocation();
         // Add a marker in Sydney and move the camera
@@ -80,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getLocationPerission(){
-        if(ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
+        if(ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
             mLocationPermissionGranted = true;
         }else{
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
@@ -107,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try{
             if(mLocationPermissionGranted){
                 mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
             }else{
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -123,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try{
             if(mLocationPermissionGranted){
                 @SuppressLint("MissingPermission") Task locationResult = mFusedClientProvider.getLastLocation();
-                locationResult.addOnCompleteListener(this, new OnCompleteListener() {
+                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()){
@@ -138,7 +184,83 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         }catch (Exception e){
+            e.printStackTrace();
             Log.e("Exception: %s", e.getMessage());
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.option_get_place){
+            showCurrentPlace();
+        }
+        return true;
+    }
+
+    private void showCurrentPlace(){
+        if(mMap == null){
+            return;
+        }
+        if(mLocationPermissionGranted){
+            @SuppressLint("MissingPermission") Task<PlaceLikelihoodBufferResponse> placeResult = mPlaceDetectionClient.getCurrentPlace(null);
+            placeResult.addOnCompleteListener(new OnCompleteListener<PlaceLikelihoodBufferResponse>() {
+                @Override
+                public void onComplete(@NonNull Task<PlaceLikelihoodBufferResponse> task) {
+                    if(task.isSuccessful() && task.getResult() !=null){
+                        PlaceLikelihoodBufferResponse likelyPlaces = task.getResult();
+                        int count;
+                        if(likelyPlaces.getCount() < M_MAX_ENTRIES){
+                            count = likelyPlaces.getCount();
+                        }else{
+                            count = M_MAX_ENTRIES;
+                        }
+                        int i =0 ;
+                        mLikelyPlaceAddresses = new String[count];
+                        mLikelyPlaceAttributions = new String[count];
+                        mLikelyPlaceNames = new String[count];
+                        mLikelyPlaceLatLngs = new LatLng[count];
+                        for (PlaceLikelihood placeLikelihood:likelyPlaces) {
+                            mLikelyPlaceNames[i] = String.valueOf(placeLikelihood.getPlace().getName());
+                            mLikelyPlaceAddresses[i] = String.valueOf(placeLikelihood.getPlace().getAddress());
+                            mLikelyPlaceAttributions[i] = String.valueOf(placeLikelihood.getPlace().getAttributions());
+                            mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+                            i++;
+                            if(i > count-1){
+                                break;
+                            }
+                        }
+                        likelyPlaces.release();
+                        openPlacesDialog();
+                    }else{
+                        System.out.println("loi: "+ task.getException());
+                    }
+                }
+            });
+        }else{
+            System.out.println("user didnot grant location permission");
+            mMap.addMarker(new MarkerOptions().title("TIUTED TOWER").position(mDefaultLocation));
+            getLocationPerission();
+        }
+    }
+
+    private void openPlacesDialog(){
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                LatLng markerLatLng = mLikelyPlaceLatLngs[i];
+                String marketSnipet = mLikelyPlaceAddresses[i];
+                if(mLikelyPlaceAttributions[i] != null){
+                    marketSnipet = marketSnipet + "\n" + mLikelyPlaceAttributions[i];
+                }
+
+                mMap.addMarker(new MarkerOptions().title(mLikelyPlaceNames[i]).position(markerLatLng).snippet(marketSnipet));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,DEFAULT_ZOOM));
+            }
+        };
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.pick_place)
+                .setItems(mLikelyPlaceNames, listener)
+                .show();
     }
 }
