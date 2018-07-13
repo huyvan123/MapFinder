@@ -5,4 +5,5 @@
     <string name="pick_place">pick_place</string>
     <string name="menu_settings">menu_settings</string>
     <string name="search">Tìm</string>
+    <string name="key_binding_default_toolbar_name">Modal-Toolbar-Title</string>
 </resources>

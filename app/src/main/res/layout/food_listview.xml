@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/food_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp" />
+
+        <LinearLayout
+            android:id="@+id/food_contents"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Name: "
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    <TextView
+                        android:id="@+id/food_name"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:text="Address: "
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    <TextView
+                        android:id="@+id/food_address"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Phone number: "
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    <TextView
+                        android:id="@+id/food_phonenumber"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Rating: "
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    <TextView
+                        android:id="@+id/food_rating"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Open now: "
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    <TextView
+                        android:id="@+id/food_open_now"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                </LinearLayout>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Open times: "
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    <TextView
+                        android:id="@+id/food_open_time"
+                        android:layout_width="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    <View
+        android:layout_width="300dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="20sp"
+        android:background="@color/common_google_signin_btn_text_dark_disabled" />
+</LinearLayout>
