@@ -3,32 +3,32 @@ package com.example.hp.myapplication;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,18 +57,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import model.FoodStore;
 
+import static android.location.LocationManager.GPS_PROVIDER;
+import static com.example.hp.myapplication.PermissionAccess.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener,
-        View.OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnPoiClickListener, GoogleMap.OnMyLocationButtonClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        View.OnClickListener, GoogleMap.OnMarkerClickListener, GoogleMap.OnPoiClickListener, GoogleMap.OnMyLocationButtonClickListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
@@ -81,7 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedClientProvider ;
     private final LatLng mDefaultLocation = new LatLng( 21.028511, 105.804817);
     private static final int DEFAULT_ZOOM = 16;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
     private boolean mLocationPermissionGranted;
     private GeoDataClient mGeoDataClient;
 
@@ -89,33 +94,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     private static final int PLACE_PICKER_REQUEST = 1;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private List<FoodStore> storeList;
+    private Dialog dialog;
+    private TextView dialogContent;
+    private Button dialogButton;
 
+    private static final String  PERMISSION_INTERNET = "You must be connect to the internet!";
+    private static final String  PERMISSION_LOCATION = "You must agree to enable your location!";
+    private static final String SEARCH_TYPE = "food";
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        //create dialog contents
+        dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_internet_request);
+        dialogContent = dialog.findViewById(R.id._permission_content);
+        dialogButton = dialog.findViewById(R.id.confirm);
+        dialogButton.setOnClickListener(this);
+        //check internet connection
+        try {
+            if(new PermissionAccess().execute(MapsActivity.this).get() == false){
+                dialogContent.setText(PERMISSION_INTERNET);
+                dialog.show();
+            }else{
+                searchStoreBtn = findViewById(R.id.search_store);
+                searchStoreBtn.setOnClickListener(this);
+                mFusedClientProvider = LocationServices.getFusedLocationProviderClient(this);
+                mGeoDataClient = Places.getGeoDataClient(this);
+                if(savedInstanceState != null){
+                    mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+                    mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+                }
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
 
-        CoordinatorLayout coordinatorLayout = findViewById(R.id.codinate);
-        View bottomSheet = coordinatorLayout.findViewById(R.id.nestted_scroll_view);
-        final BottomSheetBehaviorGoogleMapsLike behavior = BottomSheetBehaviorGoogleMapsLike.from(bottomSheet);
-        behavior.setState(BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED);
-
-        searchStoreBtn = findViewById(R.id.search_store);
-        searchStoreBtn.setOnClickListener(this);
-        mFusedClientProvider = LocationServices.getFusedLocationProviderClient(this);
-        mGeoDataClient = Places.getGeoDataClient(this);
-        if(savedInstanceState != null){
-            mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
+                mapFragment.getMapAsync(this);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
-
-        turnOnGPS();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//
-//        mapFragment.getMapAsync(this);
     }
 
 
@@ -148,24 +172,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         //get permission
         getLocationPerission();
-
-//        mLastKnownLocation = new Location("GOOGLE");
-//        statusCheck();
-        mMap.setOnMarkerClickListener(this);
-        mMap.setOnMyLocationButtonClickListener(this);
-        mMap.setOnMapClickListener(this);
-        mMap.setOnPoiClickListener(this);
-        updateLocationUI();
-        getDeviceLocation();
     }
 
-    private void getLocationPerission(){
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            mLocationPermissionGranted = true;
-        }else{
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -174,9 +182,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     mLocationPermissionGranted = true;
+                    getLocationPerission();
                 }
+                break;
+            default:
+                dialogContent.setText(PERMISSION_LOCATION);
+                dialog.show();
         }
-        updateLocationUI();
     }
 
     @SuppressLint("MissingPermission")
@@ -186,6 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         try{
             if(mLocationPermissionGranted){
+                System.out.println("key_01 vao set my location");
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
             }else{
@@ -202,21 +215,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void getDeviceLocation(){
         try{
             if(mLocationPermissionGranted){
-                @SuppressLint("MissingPermission") Task<Location> locationResult = mFusedClientProvider.getLastLocation();
-                locationResult.addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()){
-                            mLastKnownLocation = (Location) task.getResult();
-                            LatLng latLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                            marker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,DEFAULT_ZOOM),1000,null);
-                        }else{
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation,DEFAULT_ZOOM));
-                            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-                        }
-                    }
-                });
+                @SuppressLint("MissingPermission") Task<Location> locationResult =
+                        mFusedClientProvider.getLastLocation()
+                                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                    @Override
+                                    public void onSuccess(Location location) {
+                                        if(location != null){
+                                            System.out.println("key_01 loaction != null");
+                                            mLastKnownLocation = location;
+                                            LatLng latLng = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                                            marker = mMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,DEFAULT_ZOOM),1000,null);
+                                        }else{
+                                            System.out.println("key_01 loaction == null");
+                                            turnOnGPS();
+                                        }
+                                    }
+                                });
             }
         }catch (Exception e){
             Log.e("Exception: %s", e.getMessage());
@@ -258,9 +273,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(marker != null){
             marker.remove();
         }
-//        if(mMap.isMyLocationEnabled()){
-//            mMap.setMyLocationEnabled(false);
-//        }
         //set current location
         mLastKnownLocation.setLatitude(latLng.latitude);
         mLastKnownLocation.setLongitude(latLng.longitude);
@@ -274,15 +286,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onClick(View view) {
         if(view.getId() == R.id.search_store){
             try {
-                List<FoodStore> storeList;
-                storeList = PlaceApi.getFoodPlace(mMap,new PlaceApi().doInBackground(PlaceApi.search("food",
+
+                storeList = PlaceApi.getFoodPlace(mMap,new PlaceApi().doInBackground(PlaceApi.search(SEARCH_TYPE,
                         mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude(),1000)));
-                ListView listView = findViewById(R.id.food_list_view);
-                FoodCustomListView foodCustomListView = new FoodCustomListView(this,R.layout.food_listview, storeList);
-                listView.setAdapter(foodCustomListView);
+
+                bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+
+                BottomSheetListView listView = findViewById(R.id.food_list_view);
+
+                CustomFoodListView customFoodListView = new CustomFoodListView(this,R.layout.food_listview, storeList);
+                listView.setAdapter(customFoodListView);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        System.out.println("position: "+ i + " or " + l);
+                    }
+                });
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }else if(view.getId() == dialogButton.getId()){
+            dialog.cancel();
+            this.finishAffinity();
         }
     }
 
@@ -320,7 +346,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void turnOnGPS(){
         if (mGoogleApiClient == null) {
-            System.out.println("vao google api client = null");
+            System.out.println("key_01 vao google api client = null");
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addApi(LocationServices.API)
                     .build();
@@ -336,73 +362,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             PendingResult<LocationSettingsResult> result =
                     LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, locationSettingsRequestBuilder.build());
             result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @SuppressLint("MissingPermission")
                 @Override
                 public void onResult(LocationSettingsResult result) {
                     final Status status = result.getStatus();
                     switch (status.getStatusCode()) {
                         case LocationSettingsStatusCodes.SUCCESS:
-                            System.out.println("vao LocationSettingsStatusCodes.SUCCESS");
+                            System.out.println("key_01 vao LocationSettingsStatusCodes.SUCCESS");
                             try{
                                 manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-                                if (manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-                                    buildAlertMessageNoGps();
+                                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 1.0f, MapsActivity.this);
+                                if (!manager.isProviderEnabled( GPS_PROVIDER ) ) {
+                                    startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 0);
+                                }else{
+                                    System.out.println("key_01 update location ui");
+                                    updateLocationUI();
+                                    getDeviceLocation();
+                                }
 
-                                }
-                                String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-                                if(!provider.contains("gps")){ //if gps is disabled
-                                    System.out.println("vao disable gsp");
-                                    final Intent poke = new Intent();
-                                    poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-                                    poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-                                    poke.setData(Uri.parse("3"));
-                                    sendBroadcast(poke);
-                                }
                             }
                             catch (Exception e) {
                                 e.printStackTrace();
                             }
-//                            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                                    .findFragmentById(R.id.map);
-//
-//                            mapFragment.getMapAsync(MapsActivity.this);
                             break;
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            System.out.println("vao LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
+                            System.out.println("key_01 vao LocationSettingsStatusCodes.RESOLUTION_REQUIRED");
                             try {
                                 status.startResolutionForResult(
                                         MapsActivity.this,
                                         REQUEST_CHECK_SETTINGS);
+//                                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                             } catch (IntentSender.SendIntentException e) {
                                 e.printStackTrace();
                             }
                             break;
                         case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            System.out.println("vao LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE");
+                            System.out.println("key_01 vao LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE");
                             break;
+
+                            default:
+                                System.out.println("vao nothing");
                     }
                 }
             });
-
+        }else{
+            updateLocationUI();
+            getDeviceLocation();
         }
-    }
-    private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 
+    }
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -421,21 +429,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
+//                this.finish();
                 switch (resultCode) {
                     case Activity.RESULT_OK:
-                        if (mGoogleApiClient.isConnected()) {
-                            Intent i=new Intent("android.location.GPS_ENABLED_CHANGE");
-                            i.putExtra("enabled", true);
-                            sendBroadcast(i);
-                            System.out.println("vao ok");
-                            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                                    .findFragmentById(R.id.map);
-
-                            mapFragment.getMapAsync(this);
-                        }
+                        System.out.println("key_01 vao 0K");
+                        turnOnGPS();
                         break;
                     case Activity.RESULT_CANCELED:
-                        onStop();
+                        System.out.println("key_01 not connected");
+                        this.finishAffinity();
                         break;
                     default:
                         break;
@@ -450,6 +452,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         getDeviceLocation();
                     }
                 }
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    private void getLocationPerission(){
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            mLocationPermissionGranted = true;
+            System.out.println("key_01 after check location ui");
+            mMap.setOnMarkerClickListener(this);
+            mMap.setOnMyLocationButtonClickListener(this);
+            mMap.setOnMapClickListener(this);
+            mMap.setOnPoiClickListener(this);
+            turnOnGPS();
+        }else{
+            System.out.println("key_01 enter else");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/internet"
+    android:orientation="vertical"
+    android:layout_width="250dp"
+    android:background="#75838a"
+    android:layout_gravity="center"
+    android:layout_height="120dp">
+    <TextView
+        android:id="@+id/_permission_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#001f33"
+        android:textSize="20dp"
+        android:textAlignment="center"
+        android:text="You must be connect to internet!"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+    <Button
+        android:id="@+id/confirm"
+        android:background="#668cff"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:text="OK"
+        android:layout_height="wrap_content" />
+</LinearLayout>

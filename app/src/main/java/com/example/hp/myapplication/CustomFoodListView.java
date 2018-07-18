@@ -20,12 +20,12 @@ import java.util.List;
 
 import model.FoodStore;
 
-public class FoodCustomListView extends ArrayAdapter<FoodStore>{
+public class CustomFoodListView extends ArrayAdapter<FoodStore>{
 
     private Integer resource;
     private Context context;
     private List<FoodStore> storeList;
-    public FoodCustomListView(@NonNull Context context, int resource, @NonNull List<FoodStore> objects) {
+    public CustomFoodListView(@NonNull Context context, int resource, @NonNull List<FoodStore> objects) {
         super(context, resource, objects);
         this.resource = resource;
         this.storeList = objects;

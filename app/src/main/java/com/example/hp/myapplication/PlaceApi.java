@@ -37,6 +37,9 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
     private static final String PLACE_ID = "place_id";
     private static final String ID = "id";
     private static final String NAME = "name";
+    private static final String PHOTOS = "photos";
+    private static final String MAXWIDTH = "400";
+    private static final String PHOTO_REFERENCE = "photo_reference";
 
     private static final String DETAIL_RESULT = "result";
     private static final String DETAIL_FORMATTED_ADDRESS = "formatted_address";
@@ -54,6 +57,7 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
     private static final String TYPE_PLACE = "/place";
     private static final String TYPE_DETAIL = "/details";
     private static final String TYPE_SEARCH = "/nearbysearch";
+    private static final String TYPE_PHOTO = "/photo";
     private static final String OUT_JSON = "/json";
     private static final String API_KEY = "AIzaSyB5x96cq3PIuDGjyi2cec4xNfHR2JqO6jA";
 
@@ -62,8 +66,8 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
     }
 
     public static String search(String type, double lat, double lng, int radius) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
             StringBuilder sb = new StringBuilder(PLACES_API_BASE);
             sb.append(TYPE_PLACE);
             sb.append(TYPE_SEARCH);
@@ -77,8 +81,8 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
         return sb.toString();
     }
     public static String detail(String placeid) {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
             StringBuilder sb = new StringBuilder(PLACES_API_BASE);
             sb.append(TYPE_PLACE);
             sb.append(TYPE_DETAIL);
@@ -87,6 +91,16 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
             sb.append("&key=").append(API_KEY);
 
         return sb.toString();
+    }
+
+    public static String getPhoto(String maxWidth, String photoReference){
+        StringBuilder builder = new StringBuilder(PLACES_API_BASE);
+        builder.append(TYPE_PLACE);
+        builder.append(TYPE_PHOTO);
+        builder.append("?maxwidth=").append(maxWidth);
+        builder.append("&photoreference=").append(photoReference);
+        builder.append("&key=").append(API_KEY);
+        return builder.toString();
     }
 
     @Override
@@ -151,9 +165,15 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
             LatLng  location = new LatLng(lat,lng);
             String placeId = jsonArray.getString(PLACE_ID);
             FoodStore foodStore = getFoodStoreDetail(placeId);
+            //get photo reference
+            if (jsonArray.has(PHOTOS)){
+                JSONArray photos = jsonArray.getJSONArray(PHOTOS);
+                JSONObject photo = photos.getJSONObject(0);
+                String photoReferrence = photo.getString(PHOTO_REFERENCE);
+                foodStore.setIconUrl(getPhoto(MAXWIDTH,photoReferrence));
+            }
             foodStore.setPlaceID(placeId);
             foodStore.setLocation(location);
-            System.out.println("food name: "+ foodStore.getName());
             foodStores.add(foodStore);
         }
         for (Marker m: markerList) {
@@ -191,7 +211,7 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
         }
         String openNow = "N/A";
         if(jsonOpeningHours.has(DETAIL_OPEN_NOW)){
-            openNow = String.valueOf(jsonOpeningHours.getString(DETAIL_OPEN_NOW));
+            openNow = changeOpenNow(jsonOpeningHours.getString(DETAIL_OPEN_NOW));
         }
         JSONArray arrayWeekDayText = new JSONArray();
         if(jsonOpeningHours.has(DETAIL_WEEK_DAY_TEXT)){
@@ -211,5 +231,13 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
         }
         foodStore = new FoodStore(id,address,phonenumber,iconUrl,openNow,openTimes,rating,website,name,internationalPhonenumber);
         return foodStore;
+    }
+
+    public static  String changeOpenNow(String before){
+        switch (before){
+            case "true": return "yes";
+            case "false": return "no";
+            default: return "N/A";
+        }
     }
 }
