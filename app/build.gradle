@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    compileOptions.encoding = "ISO-8859-1"
     defaultConfig {
         applicationId "com.example.hp.myapplication"
         minSdkVersion 18
@@ -19,21 +20,21 @@ android {
 }
 
 dependencies {
-//    implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
+    //    implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-places:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
     implementation 'com.android.support:design:28.0.0-alpha3'
     implementation 'com.google.android.gms:play-services-drive:15.0.1'
-
     // butter knife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-//    implementation 'com.google.android.gms:play-services-nearby:15.0.1'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //    implementation 'com.google.android.gms:play-services-nearby:15.0.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(':droidAR')
 }

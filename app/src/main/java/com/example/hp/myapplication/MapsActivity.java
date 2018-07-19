@@ -58,7 +58,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
 
@@ -212,10 +211,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void getDeviceLocation(){
         try{
             if(mLocationPermissionGranted){
-                @SuppressLint("MissingPermission") Task<Location> locationResult =
+//                @SuppressLint("MissingPermission") Task<Location> locationResult =
                         mFusedClientProvider.getLastLocation()
                                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                                     @Override

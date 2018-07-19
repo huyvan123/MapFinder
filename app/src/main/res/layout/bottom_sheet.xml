@@ -19,6 +19,9 @@
     <com.example.hp.myapplication.BottomSheetListView
         android:id="@+id/food_list_view"
         android:layout_width="match_parent"
+        android:smoothScrollbar="true"
+        android:scrollingCache="false"
+        android:animationCache="false"
         android:layout_height="600dp"/>
 
 </LinearLayout>

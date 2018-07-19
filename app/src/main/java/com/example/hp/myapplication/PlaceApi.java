@@ -108,7 +108,6 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
         StringBuilder placesBuilder = new StringBuilder();
         for (String placeSearchURL : placesURL) {
             try {
-                System.out.println("place search: "+ placeSearchURL);
                 URL requestUrl = new URL(placeSearchURL);
                 HttpURLConnection connection = (HttpURLConnection)requestUrl.openConnection();
                 connection.setRequestMethod("GET");
@@ -164,6 +163,7 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
             double lng = jsonLocation.getDouble(LNG);
             LatLng  location = new LatLng(lat,lng);
             String placeId = jsonArray.getString(PLACE_ID);
+            System.out.println("key_01 palceid: "+ placeId);
             FoodStore foodStore = getFoodStoreDetail(placeId);
             //get photo reference
             if (jsonArray.has(PHOTOS)){
@@ -191,7 +191,7 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
 
     public static FoodStore getFoodStoreDetail(String placeId) throws JSONException {
         FoodStore foodStore;
-        JSONObject jsonObject = new JSONObject(new PlaceApi().doInBackground(detail(placeId)));
+        JSONObject jsonObject = new JSONObject(searchDetail(detail(placeId)));
         JSONObject jsonResult = jsonObject.getJSONObject(DETAIL_RESULT);
         String address = jsonResult.getString(DETAIL_FORMATTED_ADDRESS);
         String phonenumber = "N/A";
@@ -239,5 +239,50 @@ public class PlaceApi extends AsyncTask<String, Void, String>{
             case "false": return "no";
             default: return "N/A";
         }
+    }
+
+    private static String searchDetail(String ...url){
+        StringBuilder placesBuilder = new StringBuilder();
+        for (String placeSearchURL : url) {
+            try {
+                System.out.println("place search: "+ placeSearchURL);
+                URL requestUrl = new URL(placeSearchURL);
+                HttpURLConnection connection = (HttpURLConnection)requestUrl.openConnection();
+                connection.setRequestMethod("GET");
+                connection.connect();
+                int responseCode = connection.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+
+                    BufferedReader reader = null;
+
+                    InputStream inputStream = connection.getInputStream();
+                    if (inputStream == null) {
+                        return "";
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+
+                        placesBuilder.append(line + "\n");
+                    }
+
+                    if (placesBuilder.length() == 0) {
+                        return "";
+                    }
+
+                    Log.d("test", placesBuilder.toString());
+                }
+                else {
+                    Log.i("test", "Unsuccessful HTTP Response Code: " + responseCode);
+                }
+            } catch (MalformedURLException e) {
+                Log.e("test", "Error processing Places API URL", e);
+            } catch (IOException e) {
+                Log.e("test", "Error connecting to Places API", e);
+            }
+        }
+        return placesBuilder.toString();
     }
 }
