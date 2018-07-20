@@ -46,7 +46,7 @@ public class CustomFoodListView extends ArrayAdapter<FoodStore>{
             viewHolder.rating = convertView.findViewById(R.id.food_rating);
             viewHolder.openNow = convertView.findViewById(R.id.food_open_now);
             viewHolder.openTime = convertView.findViewById(R.id.food_open_time);
-
+            viewHolder.website = convertView.findViewById(R.id.food_website);
 
                 convertView.setTag(viewHolder);
         }else{
@@ -77,6 +77,7 @@ public class CustomFoodListView extends ArrayAdapter<FoodStore>{
                 }else{
                     viewHolder.openTime.setText(openTime);
                 }
+                viewHolder.website.setText(foodStore.getWebsite());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -88,7 +89,7 @@ public class CustomFoodListView extends ArrayAdapter<FoodStore>{
 
     static class  ViewHolder{
         ImageView icon;
-        TextView foodName, address, phone, rating, openNow, openTime;
+        TextView foodName, address, phone, rating, openNow, openTime, website;
     }
 
 

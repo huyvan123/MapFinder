@@ -44,5 +44,6 @@ public class LoadImageFood extends AsyncTask<String, Void, Bitmap> {
             bitmap = BitmapFactory.decodeStream(in);
         }
         return bitmap;
+        //luu file vao may
     }
 }

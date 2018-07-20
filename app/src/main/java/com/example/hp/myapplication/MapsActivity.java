@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -59,12 +60,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import arcore.MyArActivity;
 import model.FoodStore;
 
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -89,7 +89,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private GeoDataClient mGeoDataClient;
 
-    private Location mLastKnownLocation;
+    //2 locations to check multiclick on 1 loaction
+    private Location mLastKnownLocation, mAfterLocation;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     private static final int PLACE_PICKER_REQUEST = 1;
@@ -97,11 +98,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<FoodStore> storeList;
     private Dialog dialog;
     private TextView dialogContent;
+    private TextView tvSoluong;
     private Button dialogButton;
+    private PlaceApi placeApi;
 
     private static final String  PERMISSION_INTERNET = "You must be connect to the internet!";
     private static final String  PERMISSION_LOCATION = "You must agree to enable your location!";
-    private static final String SEARCH_TYPE = "food";
+    private static final String SEARCH_TYPE_RESTAURANT = "restaurant";
+    private static final String SEARCH_TYPE_MEAL_DELEVERY = "meal_delivery";
+    private static final String SEARCH_TYPE_MEAL_TAKEAWAY = "meal_takeaway";
+    private static final String SEARCH_TYPE_SUPERMARKET = "supermarket";
+    private static final String SEARCH_KEY_QUAN_NHAU = "quán nh?u";
+    private static final String SEARCH_KEY_QUAN_COM = "quán c?m";
+    String url01,url02,url03,url04,url05,url06;
 
     @SuppressLint("ResourceType")
     @Override
@@ -121,6 +130,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialogContent.setText(PERMISSION_INTERNET);
                 dialog.show();
             }else{
+                mAfterLocation = new Location("Huy Van");
+                mAfterLocation.setLongitude(0.0);
+                mAfterLocation.setLatitude(0.0);
+                tvSoluong = findViewById(R.id.so_luong);
                 searchStoreBtn = findViewById(R.id.search_store);
                 searchStoreBtn.setOnClickListener(this);
                 mFusedClientProvider = LocationServices.getFusedLocationProviderClient(this);
@@ -171,6 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
         //get permission
         getLocationPerission();
+
     }
 
 
@@ -285,26 +299,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onClick(View view) {
         if(view.getId() == R.id.search_store){
-            try {
+            if(!isLocationTheSame(mAfterLocation,mLastKnownLocation)) {
+                mAfterLocation.setLongitude(mLastKnownLocation.getLongitude());
+                mAfterLocation.setLatitude(mLastKnownLocation.getLatitude());
+                searchStoreBtn.setEnabled(false);
+                url01 = PlaceApi.search(SEARCH_TYPE_MEAL_DELEVERY, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url02 = PlaceApi.search(SEARCH_TYPE_MEAL_TAKEAWAY, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url03 = PlaceApi.search(SEARCH_TYPE_RESTAURANT, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url04 = PlaceApi.search(SEARCH_TYPE_SUPERMARKET, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url05 = PlaceApi.search(null, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, SEARCH_KEY_QUAN_COM);
+                url06 = PlaceApi.search(null, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, SEARCH_KEY_QUAN_NHAU);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        try {
+                            placeApi = new PlaceApi(mMap, searchStoreBtn, MapsActivity.this);
+                            storeList = placeApi.execute(url01, url02, url03, url04, url05, url06).get();
+                            //                placeApi.cancel(true);
+                            tvSoluong.setText(String.valueOf(storeList.size()));
+                            bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
 
-                storeList = PlaceApi.getFoodPlace(mMap,new PlaceApi().doInBackground(PlaceApi.search(SEARCH_TYPE,
-                        mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude(),1000)));
+                            BottomSheetListView listView = findViewById(R.id.food_list_view);
 
-                bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+                            CustomFoodListView customFoodListView = new CustomFoodListView(MapsActivity.this, R.layout.food_listview, storeList);
+                            listView.setAdapter(customFoodListView);
+                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Intent intent = new Intent(MapsActivity.this, MyArActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
 
-                BottomSheetListView listView = findViewById(R.id.food_list_view);
 
-                CustomFoodListView customFoodListView = new CustomFoodListView(this,R.layout.food_listview, storeList);
-                listView.setAdapter(customFoodListView);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        System.out.println("position: "+ i + " or " + l);
                     }
-                });
-            } catch (JSONException e) {
-                e.printStackTrace();
+                }, 15000);   //15 seconds
+
+            }else{
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }
         }else if(view.getId() == dialogButton.getId()){
             dialog.cancel();
@@ -489,4 +527,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
+
+    private boolean isLocationTheSame(Location l1, Location l2){
+        if(l1.getLatitude() == l2.getLatitude() && l1.getLongitude() == l2.getLongitude()){
+            return true;
+        }
+        return false;
+    }
+
 }

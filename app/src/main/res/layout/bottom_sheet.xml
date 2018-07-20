@@ -10,18 +10,42 @@
     app:behavior_peekHeight="30dp"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:orientation="horizontal"
         android:background="@android:color/holo_blue_bright"
-        android:text="Food Store"
-        android:textColor="@color/design_default_color_primary" />
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/left"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Food Store"
+            android:textColor="@color/design_default_color_primary" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginLeft="210dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Số lượng:"
+                android:textStyle="italic"
+                android:textColor="@color/design_default_color_primary"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/so_luong"
+                android:layout_width="match_parent"
+                android:text="0"
+                android:textStyle="italic"
+                android:textColor="@color/design_default_color_primary"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
     <com.example.hp.myapplication.BottomSheetListView
         android:id="@+id/food_list_view"
         android:layout_width="match_parent"
         android:smoothScrollbar="true"
         android:scrollingCache="false"
         android:animationCache="false"
-        android:layout_height="600dp"/>
-
+        android:layout_height="500dp"/>
 </LinearLayout>
