@@ -28,7 +28,7 @@ import java.util.List;
 
 import model.FoodStore;
 
-public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
+public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>> {
 
     private static final String RESULTS = "results";
     private static final String GEOMETRY = "geometry";
@@ -53,7 +53,6 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
     private static final String DETAIL_RATING = "rating";
     private static final String DETAIL_WEBSITE = "website";
 
-    public static List<Marker> markerList = new ArrayList<>();
 
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api";
     private static final String TYPE_PLACE = "/place";
@@ -64,17 +63,25 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
     private static final String API_KEY = "AIzaSyB5x96cq3PIuDGjyi2cec4xNfHR2JqO6jA";
     private static final String METHOD_GET = "GET";
 
+    private static final int DEFAULT_QUANTITY = 5;
+    private static final int DEFAULT_BEGIN = 0;
+
+    private List<Marker> markerList;
     private GoogleMap mMap;
     private Button searchButton;
     private Activity activity;
+    private List<String> placeIDtList;
+
     public PlaceApi(GoogleMap googleMap, Button button, Activity activity) {
         super();
         this.mMap = googleMap;
         this.searchButton = button;
         this.activity = activity;
+        markerList = new ArrayList<>();
+        placeIDtList = new ArrayList<>();
     }
 
-    public static String search(String type, double lat, double lng, int radius, String key) {
+    public static String getUrlForSearchPlace(String type, double lat, double lng, int radius, String key) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             StringBuilder sb = new StringBuilder(PLACES_API_BASE);
@@ -94,7 +101,7 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
 
         return sb.toString();
     }
-    public static String detail(String placeid) {
+    public static String getUrlForSearchPlaceDetail(String placeid) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
             StringBuilder sb = new StringBuilder(PLACES_API_BASE);
@@ -106,7 +113,7 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
 
         return sb.toString();
     }
-    public static String getPhoto(String maxWidth, String photoReference){
+    public static String getUrlForSearchPlacePhoto(String maxWidth, String photoReference){
         StringBuilder builder = new StringBuilder(PLACES_API_BASE);
         builder.append(TYPE_PLACE);
         builder.append(TYPE_PHOTO);
@@ -118,42 +125,17 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
 
     @Override
     protected List<FoodStore> doInBackground(String... placesURL) {
-        List<String> reusultList = new ArrayList<>();
-        StringBuilder placesBuilder = new StringBuilder();
+        List<String> jsonResultList = new ArrayList<>();
         for (String placeSearchURL : placesURL) {
-            try {
-                URL requestUrl = new URL(placeSearchURL);
-                HttpURLConnection connection = (HttpURLConnection)requestUrl.openConnection();
-                connection.setRequestMethod(METHOD_GET);
-                connection.connect();
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader reader = null;
-                    InputStream inputStream = connection.getInputStream();
-                    if (inputStream != null) {
-                        reader = new BufferedReader(new InputStreamReader(inputStream));
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            placesBuilder.append(line + "\n");
-                        }
-                        reusultList.add(placesBuilder.toString());
-                        placesBuilder = new StringBuilder();
-                    }
-                }
-            } catch (MalformedURLException e) {
-                Log.e("test", "Error processing Places API URL", e);
-            } catch (IOException e) {
-                Log.e("test", "Error connecting to Places API", e);
-            }
+            jsonResultList.add(getRespondFromUrl(placeSearchURL));
         }
-
-
         try {
-            return getFoodPlace(reusultList);
+            setAllLocation(jsonResultList);
+            return loadFoodStore(DEFAULT_QUANTITY, DEFAULT_BEGIN);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return new ArrayList<>();
+        return null;
     }
 
     @Override
@@ -162,69 +144,24 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
         this.searchButton.setEnabled(true);
         this.cancel(true);
     }
-
-    private List<FoodStore> getFoodPlace(List<String> listJsonString) throws JSONException {
-        List<FoodStore> foodStores = new ArrayList<>();
-        List<String> placeIdList = new ArrayList<>();
-        for (String jsonString: listJsonString) {
-            JSONObject jsonObject = new JSONObject(jsonString);
-            JSONArray jsonArrayResult = jsonObject.getJSONArray(RESULTS);
-            for (int i = 0; i< jsonArrayResult.length(); i++){
-                //get each array element
-                JSONObject jsonArray = jsonArrayResult.getJSONObject(i);
-                //get geometry
-                JSONObject jsonGeometry = jsonArray.getJSONObject(GEOMETRY);
-                //get location
-                JSONObject jsonLocation = jsonGeometry.getJSONObject(LOCATION);
-                double lat = jsonLocation.getDouble(LAT);
-                double lng = jsonLocation.getDouble(LNG);
-                LatLng  location = new LatLng(lat,lng);
-                String placeId = jsonArray.getString(PLACE_ID);
-                if(!placeIdList.contains(placeId)){
-                    placeIdList.add(placeId);
-                    FoodStore foodStore = getFoodStoreDetail(placeId);
-                    //get photo reference
-                    if (jsonArray.has(PHOTOS)){
-                        JSONArray photos = jsonArray.getJSONArray(PHOTOS);
-                        JSONObject photo = photos.getJSONObject(0);
-                        String photoReferrence = photo.getString(PHOTO_REFERENCE);
-                        foodStore.setIconUrl(getPhoto(MAXWIDTH,photoReferrence));
-                    }
-                    foodStore.setPlaceID(placeId);
-                    foodStore.setLocation(location);
-                    foodStores.add(foodStore);
-                }
-            }
-        }
-           activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    for (Marker m: markerList) {
-                        m.setVisible(false);
-                        m.remove();
-                    }
-                    markerList.clear();
-                    Marker marker;
-                    for (FoodStore f: foodStores){
-                        marker = mMap.addMarker(new MarkerOptions().position(f.getLocation()).icon(BitmapDescriptorFactory.defaultMarker()));
-                        markerList.add(marker);
-                    }
-                }
-            });
-
-        return foodStores;
-    }
-
     private FoodStore getFoodStoreDetail(String placeId) throws JSONException {
         FoodStore foodStore;
-        JSONObject jsonObject = new JSONObject(searchDetail(detail(placeId)));
+        JSONObject jsonObject = new JSONObject(getRespondFromUrl(getUrlForSearchPlaceDetail(placeId)));
         JSONObject jsonResult = jsonObject.getJSONObject(DETAIL_RESULT);
         String address = jsonResult.getString(DETAIL_FORMATTED_ADDRESS);
         String phonenumber = "N/A";
         if(jsonResult.has(DETAIL_FORMATTED_PHONENUMBER)){
             phonenumber = jsonResult.getString(DETAIL_FORMATTED_PHONENUMBER);
         }
-        String iconUrl = jsonResult.getString(ICON);
+        String iconUrl;
+        if (jsonResult.has(PHOTOS)){
+            JSONArray photos = jsonResult.getJSONArray(PHOTOS);
+            JSONObject photo = photos.getJSONObject(0);
+            String photoReferrence = photo.getString(PHOTO_REFERENCE);
+            iconUrl = getUrlForSearchPlacePhoto(MAXWIDTH,photoReferrence);
+        }else {
+            iconUrl = jsonResult.getString(ICON);
+        }
         String id = jsonResult.getString(ID);
         String internationalPhonenumber = "";
         if(jsonResult.has(DETAIL_INTERNATIONAL_PHONENUMBER)){
@@ -267,44 +204,94 @@ public class PlaceApi extends AsyncTask<String, Void, List<FoodStore>>{
         }
     }
 
-    private static String searchDetail(String ...url){
+    private String getRespondFromUrl(String url){
         StringBuilder placesBuilder = new StringBuilder();
-        for (String placeSearchURL : url) {
             try {
-                URL requestUrl = new URL(placeSearchURL);
+                URL requestUrl = new URL(url);
                 HttpURLConnection connection = (HttpURLConnection)requestUrl.openConnection();
-                connection.setRequestMethod("GET");
+                connection.setRequestMethod(METHOD_GET);
                 connection.connect();
                 int responseCode = connection.getResponseCode();
-
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-
                     BufferedReader reader = null;
-
                     InputStream inputStream = connection.getInputStream();
                     if (inputStream == null) {
                         return "";
                     }
                     reader = new BufferedReader(new InputStreamReader(inputStream));
-
                     String line;
                     while ((line = reader.readLine()) != null) {
-
                         placesBuilder.append(line + "\n");
                     }
-
                     if (placesBuilder.length() == 0) {
                         return "";
                     }
                 }
-                System.out.println("cc detail: " + placesBuilder.toString());
             } catch (MalformedURLException e) {
                 Log.e("test", "Error processing Places API URL", e);
             } catch (IOException e) {
                 Log.e("test", "Error connecting to Places API", e);
             }
-        }
         return placesBuilder.toString();
+    }
+
+    //for recycler
+
+    public static List<LatLng> locations = new ArrayList<>();
+
+    public void setAllLocation(List<String> listJsonString) throws JSONException {
+        for (String jsonString: listJsonString) {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONArray jsonArrayResult = jsonObject.getJSONArray(RESULTS);
+            for (int i = 0; i < jsonArrayResult.length(); i++) {
+                //get each array element
+                JSONObject jsonArray = jsonArrayResult.getJSONObject(i);
+                String placeId = jsonArray.getString(PLACE_ID);
+                if (!placeIDtList.contains(placeId)) {
+                    placeIDtList.add(placeId);
+                    //get geometry
+                    JSONObject jsonGeometry = jsonArray.getJSONObject(GEOMETRY);
+                    //get location
+                    JSONObject jsonLocation = jsonGeometry.getJSONObject(LOCATION);
+                    double lat = jsonLocation.getDouble(LAT);
+                    double lng = jsonLocation.getDouble(LNG);
+                    LatLng location = new LatLng(lat, lng);
+                    locations.add(location);
+                }
+
+            }
+        }
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (Marker m: markerList) {
+                    System.out.println("recycle remove marker");
+                    m.setVisible(false);
+                    m.remove();
+                }
+                markerList = new ArrayList<>();
+                Marker marker;
+                for (LatLng f: locations){
+                    marker = mMap.addMarker(new MarkerOptions().position(f).icon(BitmapDescriptorFactory.defaultMarker()));
+                    markerList.add(marker);
+                }
+            }
+        });
+    }
+
+    public List<FoodStore> loadFoodStore(int quantity, int begin) throws JSONException {
+        List<FoodStore> storeList = new ArrayList<>();
+        if ( begin == 0){
+            storeList.add(null);
+        }
+        for(int i = begin; i < (begin + quantity); i++){
+            try {
+                storeList.add(getFoodStoreDetail(placeIDtList.get(i)));
+            }catch (IndexOutOfBoundsException e){
+                break;
+            }
+        }
+        return storeList;
     }
 
 }

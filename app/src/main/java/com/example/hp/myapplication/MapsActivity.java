@@ -14,7 +14,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +21,8 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -79,21 +80,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker marker;
     private Button searchStoreBtn;
     private GoogleApiClient mGoogleApiClient;
-    private static final int REQUEST_CHECK_SETTINGS = 2;
     private LocationManager manager;
-
     private FusedLocationProviderClient mFusedClientProvider ;
-    private final LatLng mDefaultLocation = new LatLng( 21.028511, 105.804817);
-    private static final int DEFAULT_ZOOM = 16;
 
     private boolean mLocationPermissionGranted;
     private GeoDataClient mGeoDataClient;
 
     //2 locations to check multiclick on 1 loaction
     private Location mLastKnownLocation, mAfterLocation;
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
-    private static final int PLACE_PICKER_REQUEST = 1;
     private BottomSheetBehavior bottomSheetBehavior;
     private List<FoodStore> storeList;
     private Dialog dialog;
@@ -101,21 +95,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TextView tvSoluong;
     private Button dialogButton;
     private PlaceApi placeApi;
+    private String url01,url02,url03,url04,url05,url06;
+    private RecyclerView recyclerView;
+    private MyAdapterRecycler adapterRecycler;
 
+    private static final int REQUEST_CHECK_SETTINGS = 2;
+    private final LatLng mDefaultLocation = new LatLng( 21.028511, 105.804817);
+    private static final int DEFAULT_ZOOM = 16;
+    private static final String KEY_CAMERA_POSITION = "camera_position";
+    private static final String KEY_LOCATION = "location";
+    private static final int PLACE_PICKER_REQUEST = 1;
     private static final String  PERMISSION_INTERNET = "You must be connect to the internet!";
     private static final String  PERMISSION_LOCATION = "You must agree to enable your location!";
     private static final String SEARCH_TYPE_RESTAURANT = "restaurant";
     private static final String SEARCH_TYPE_MEAL_DELEVERY = "meal_delivery";
     private static final String SEARCH_TYPE_MEAL_TAKEAWAY = "meal_takeaway";
     private static final String SEARCH_TYPE_SUPERMARKET = "supermarket";
-    private static final String SEARCH_KEY_QUAN_NHAU = "quán nh?u";
-    private static final String SEARCH_KEY_QUAN_COM = "quán c?m";
-    String url01,url02,url03,url04,url05,url06;
+    private static final String SEARCH_KEY_QUAN_NHAU = "quï¿½n nh?u";
+    private static final String SEARCH_KEY_QUAN_COM = "quï¿½n c?m";
 
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("vao oncreate");
         setContentView(R.layout.activity_maps);
         //create dialog contents
         dialog = new Dialog(this);
@@ -133,6 +136,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mAfterLocation = new Location("Huy Van");
                 mAfterLocation.setLongitude(0.0);
                 mAfterLocation.setLatitude(0.0);
+                recyclerView = findViewById(R.id.RecycleviewList);
                 tvSoluong = findViewById(R.id.so_luong);
                 searchStoreBtn = findViewById(R.id.search_store);
                 searchStoreBtn.setOnClickListener(this);
@@ -157,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        System.out.println("vao on map ready");
         mMap = googleMap;
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -303,44 +308,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mAfterLocation.setLongitude(mLastKnownLocation.getLongitude());
                 mAfterLocation.setLatitude(mLastKnownLocation.getLatitude());
                 searchStoreBtn.setEnabled(false);
-                url01 = PlaceApi.search(SEARCH_TYPE_MEAL_DELEVERY, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
-                url02 = PlaceApi.search(SEARCH_TYPE_MEAL_TAKEAWAY, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
-                url03 = PlaceApi.search(SEARCH_TYPE_RESTAURANT, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
-                url04 = PlaceApi.search(SEARCH_TYPE_SUPERMARKET, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
-                url05 = PlaceApi.search(null, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, SEARCH_KEY_QUAN_COM);
-                url06 = PlaceApi.search(null, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, SEARCH_KEY_QUAN_NHAU);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        try {
-                            placeApi = new PlaceApi(mMap, searchStoreBtn, MapsActivity.this);
-                            storeList = placeApi.execute(url01, url02, url03, url04, url05, url06).get();
-                            //                placeApi.cancel(true);
-                            tvSoluong.setText(String.valueOf(storeList.size()));
-                            bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+                url01 = PlaceApi.getUrlForSearchPlace(SEARCH_TYPE_MEAL_DELEVERY, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url02 = PlaceApi.getUrlForSearchPlace(SEARCH_TYPE_MEAL_TAKEAWAY, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url03 = PlaceApi.getUrlForSearchPlace(SEARCH_TYPE_RESTAURANT, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url04 = PlaceApi.getUrlForSearchPlace(SEARCH_TYPE_SUPERMARKET, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, null);
+                url05 = PlaceApi.getUrlForSearchPlace(null, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, SEARCH_KEY_QUAN_COM);
+                url06 = PlaceApi.getUrlForSearchPlace(null, mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude(), 1000, SEARCH_KEY_QUAN_NHAU);
+                try {
+                    placeApi = new PlaceApi(mMap, searchStoreBtn, MapsActivity.this);
+                    bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    storeList = placeApi.execute(url01, url02, url03, url04, url05, url06).get();
 
-                            BottomSheetListView listView = findViewById(R.id.food_list_view);
-
-                            CustomFoodListView customFoodListView = new CustomFoodListView(MapsActivity.this, R.layout.food_listview, storeList);
-                            listView.setAdapter(customFoodListView);
-                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Intent intent = new Intent(MapsActivity.this, MyArActivity.class);
-                                    startActivity(intent);
-                                }
-                            });
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
+                    System.out.println("recycle storelist size: " + storeList.size());
+                    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    adapterRecycler = new MyAdapterRecycler(this, storeList, recyclerView);
+                    recyclerView.setAdapter(adapterRecycler);
+                    adapterRecycler.setLoadMore(new ILoadmore() {
+                        @Override
+                        public void onLoadMore() {
+                            System.out.println("load cc");
                         }
+                    });
 
-
-                    }
-                }, 15000);   //15 seconds
-
+//                    tvSoluong.setText(String.valueOf(storeList.size()));
+//                    bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+//                    BottomSheetListView listView = findViewById(R.id.food_list_view);
+//                    CustomFoodListView customFoodListView = new CustomFoodListView(MapsActivity.this, R.layout.food_listview, storeList);
+//                    listView.setAdapter(customFoodListView);
+//                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                            Intent intent = new Intent(MapsActivity.this, MyArActivity.class);
+//                            startActivity(intent);
+//                            }
+//                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }else{
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             }

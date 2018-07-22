@@ -16,33 +16,8 @@ import java.util.List;
 
 import model.FoodStore;
 
-public class LoadingViewHolder extends RecyclerView.ViewHolder {
 
-    public ProgressBar progressBar;
-
-    public LoadingViewHolder(@NonNull View itemView) {
-        super(itemView);
-        progressBar = itemView.findViewById(R.id.progressBar);
-    }
-
-    class FoodViewHolder extends RecyclerView.ViewHolder{
-        ImageView icon;
-        TextView foodName, address, phone, rating, openNow, openTime, website;
-
-        public FoodViewHolder(@NonNull View itemView) {
-            super(itemView);
-            icon = itemView.findViewById(R.id.food_icon);
-            foodName = itemView.findViewById(R.id.food_name);
-            address = itemView.findViewById(R.id.food_address);
-            phone = itemView.findViewById(R.id.food_phonenumber);
-            rating = itemView.findViewById(R.id.food_rating);
-            openNow = itemView.findViewById(R.id.food_open_now);
-            openTime = itemView.findViewById(R.id.food_open_time);
-            website = itemView.findViewById(R.id.food_website);
-        }
-    }
-
-    class AdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class MyAdapterRecycler extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         private final int VIEW_TYPE_ITEM = 0;
         private final int VIEW_TYPE_LOADING = 1;
         private ILoadmore iLoadmore;
@@ -53,21 +28,19 @@ public class LoadingViewHolder extends RecyclerView.ViewHolder {
         private int lastVisibleItem, totalItemCount;
 
 
-        public AdapterRecycler(Activity activity, List<FoodStore> storeList, RecyclerView recyclerView) {
+        public MyAdapterRecycler(Activity activity, List<FoodStore> storeList, RecyclerView recyclerView) {
             this.activity = activity;
             this.storeList = storeList;
             final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
             recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                }
-
-                @Override
                 public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
                     totalItemCount = linearLayoutManager.getItemCount();
                     lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
+                    System.out.println(" recycle totalItemCount: "+ totalItemCount);
+                    System.out.println(" recyvle lastVisibleItem: "+ lastVisibleItem);
+                    System.out.println(" recyvle visiableThreshold: "+ visiableThreshold);
                     if(!isLoading && totalItemCount <= (lastVisibleItem + visiableThreshold)){
                         if(iLoadmore !=null){
                             iLoadmore.onLoadMore();
@@ -115,8 +88,6 @@ public class LoadingViewHolder extends RecyclerView.ViewHolder {
                 FoodStore foodStore = storeList.get(i);
                 FoodViewHolder foodViewHolder = (FoodViewHolder) viewHolder;
                 try {
-                    System.out.println("food name in view: "+foodStore.getName());
-                    //            viewHolder.icon.setImageBitmap(showIcon(foodStore.getIconUrl()));
                     new LoadImageFood(foodViewHolder.icon).execute(foodStore.getIconUrl());
                     foodViewHolder.foodName.setText(foodStore.getName());
                     foodViewHolder.address.setText(foodStore.getAddress());
@@ -154,5 +125,29 @@ public class LoadingViewHolder extends RecyclerView.ViewHolder {
         public void setLoader(){
             isLoading = false;
         }
+}
+
+class LoadingViewHolder  extends RecyclerView.ViewHolder {
+    public ProgressBar progressBar;
+    public LoadingViewHolder(@NonNull View itemView) {
+        super(itemView);
+        progressBar = itemView.findViewById(R.id.progressBar);
     }
 }
+class FoodViewHolder extends RecyclerView.ViewHolder{
+    ImageView icon;
+    TextView foodName, address, phone, rating, openNow, openTime, website;
+
+    public FoodViewHolder(@NonNull View itemView) {
+        super(itemView);
+        icon = itemView.findViewById(R.id.food_icon);
+        foodName = itemView.findViewById(R.id.food_name);
+        address = itemView.findViewById(R.id.food_address);
+        phone = itemView.findViewById(R.id.food_phonenumber);
+        rating = itemView.findViewById(R.id.food_rating);
+        openNow = itemView.findViewById(R.id.food_open_now);
+        openTime = itemView.findViewById(R.id.food_open_time);
+        website = itemView.findViewById(R.id.food_website);
+    }
+}
+

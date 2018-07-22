@@ -41,17 +41,14 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="500dp"
             android:id="@+id/RecycleviewList">
 
         </android.support.v7.widget.RecyclerView>
 
-    </LinearLayout>
 </LinearLayout>
     <!--<com.example.hp.myapplication.BottomSheetListView-->
         <!--android:id="@+id/food_list_view"-->

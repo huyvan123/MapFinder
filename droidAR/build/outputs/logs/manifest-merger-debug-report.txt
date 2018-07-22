@@ -1,153 +1,153 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:1-94:12
 	package
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:3:5-22
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:3:5-22
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
 	android:versionName
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:5:5-30
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:5:5-30
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
 	xmlns:android
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:2:11-69
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:2:11-69
 	android:versionCode
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:4:5-28
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:4:5-28
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
 application
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:7:5-60:19
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:7:5-60:19
 	android:label
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:10:9-41
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:10:9-41
 	android:debuggable
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:8:9-34
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:8:9-34
 	android:icon
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:9:9-38
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:9:9-38
 activity#de.rwth.TechDemoLauncher
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:11:9-17:20
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:11:9-17:20
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:11:19-50
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:11:19-50
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:12:13-16:29
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:12:13-16:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:13:17-69
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:13:17-69
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:13:25-66
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:13:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:15:17-77
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:15:17-77
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:15:27-74
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:15:27-74
 activity#system.ArActivity
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:24:9-29:20
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:24:9-29:20
 	android:screenOrientation
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:28:13-50
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:28:13-50
 	android:label
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:27:13-45
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:27:13-45
 	android:configChanges
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:26:13-63
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:26:13-63
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:25:13-45
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:25:13-45
 activity#gui.CustomListActivity
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:32:9-33:20
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:32:9-33:20
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:32:19-56
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:32:19-56
 activity#system.ErrorHandler
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:36:9-47:20
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:36:9-47:20
 	android:process
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:38:13-49
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:38:13-49
 	android:taskAffinity
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:39:13-55
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:39:13-55
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:37:13-47
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:37:13-47
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.DEFAULT+data:mimeType:errors/myUnhandleCatcher
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:40:13-46:29
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:40:13-46:29
 category#android.intent.category.DEFAULT
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:41:17-76
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:41:17-76
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:41:27-73
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:41:27-73
 action#android.intent.action.VIEW
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:43:17-69
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:43:17-69
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:43:25-66
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:43:25-66
 data
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:45:17-69
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:45:17-69
 	android:mimeType
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:45:23-66
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:45:23-66
 activity#gui.InfoScreen
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:50:9-53:20
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:50:9-53:20
 	android:theme
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:52:13-56
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:52:13-56
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:51:13-42
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:51:13-42
 activity#gui.simpleUI.SimpleUIv1
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:56:9-59:20
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:56:9-59:20
 	android:theme
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:58:13-61
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:58:13-61
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:57:13-51
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:57:13-51
 uses-sdk
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:5-43
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:5-43
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:5-43
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:5-43
-INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:5-43
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:5-43
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:5-43
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:5-43
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:5-43
+INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:5-43
 	android:targetSdkVersion
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:5-43
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:5-43
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
 	android:minSdkVersion
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:67:15-40
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
-		INJECTED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:67:15-40
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
+		INJECTED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml
 uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:73:5-81
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:73:5-81
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:73:22-78
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:73:22-78
 uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:74:5-79
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:74:5-79
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:74:22-76
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:74:22-76
 uses-permission#android.permission.CAMERA
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:75:5-65
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:75:5-65
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:75:22-62
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:75:22-62
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:76:5-67
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:76:5-67
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:76:22-64
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:76:22-64
 uses-permission#android.permission.VIBRATE
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:77:5-66
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:77:5-66
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:77:22-63
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:77:22-63
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:78:5-81
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:78:5-81
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:78:22-78
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:78:22-78
 uses-feature#android.hardware.camera
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:80:5-60
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:80:5-60
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:80:19-57
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:80:19-57
 uses-feature#android.hardware.camera.autofocus
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:81:5-70
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:81:5-70
 	android:name
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:81:19-67
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:81:19-67
 uses-feature#0x00020000
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:82:5-54
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:82:5-54
 	android:glEsVersion
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:82:19-51
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:82:19-51
 supports-screens
-ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:88:5-92:39
+ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:88:5-92:39
 	android:largeScreens
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:90:9-36
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:90:9-36
 	android:smallScreens
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:92:9-36
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:92:9-36
 	android:normalScreens
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:91:9-37
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:91:9-37
 	android:anyDensity
-		ADDED from C:\Users\HP\AndroidStudioProjects\MyApplication\droidAR\src\main\AndroidManifest.xml:89:9-34
+		ADDED from E:\Mapfinder\MapFinder\MapFinder\droidAR\src\main\AndroidManifest.xml:89:9-34
